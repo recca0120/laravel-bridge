@@ -149,8 +149,8 @@ class Laravel
      *
      * @method setupView
      *
-     * @param  string    $viewPath
-     * @param  string    $compiledPath
+     * @param string $viewPath
+     * @param string $compiledPath
      *
      * @return static
      */
@@ -170,9 +170,9 @@ class Laravel
      *
      * @method setupDatabase
      *
-     * @param  array        $connections
-     * @param  string       $default
-     * @param  int          $fetch
+     * @param array  $connections
+     * @param string $default
+     * @param int    $fetch
      *
      * @return static
      */
