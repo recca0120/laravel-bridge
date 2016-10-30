@@ -11,12 +11,12 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "illuminate/view": "^5.2",
-        "illuminate/database": "^5.2",
-        "illuminate/events": "^5.2",
-        "illuminate/pagination": "^5.2",
-        "illuminate/http": "^5.2",
-        "recca0120/laravel-tracy": "^1.5"
+        "illuminate/view": "5.2.*",
+        "illuminate/database": "5.2.*",
+        "illuminate/events": "5.2.*",
+        "illuminate/pagination": "5.2.*",
+        "illuminate/http": "5.2.*",
+        "recca0120/laravel-tracy": "1.5.*"
     },
     "require-dev": {
         "nesbot/carbon": "~1.20",
