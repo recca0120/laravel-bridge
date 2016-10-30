@@ -159,8 +159,7 @@ class Laravel
         $this->config['view.paths'] = is_array($viewPath) ? $viewPath : [$viewPath];
         $this->config['view.compiled'] = $compiledPath;
         $viewServiceProvider = new ViewServiceProvider($this->app);
-        $viewServiceProvider->register();
-        $viewServiceProvider->boot();
+        $this->bootServiceProvider($viewServiceProvider);
 
         return $this;
     }
@@ -183,8 +182,7 @@ class Laravel
         $this->config['database.connections'] = $connections;
 
         $databaseServiceProvider = new DatabaseServiceProvider($this->app);
-        $databaseServiceProvider->register();
-        $databaseServiceProvider->boot();
+        $this->bootServiceProvider($databaseServiceProvider);
 
         return $this;
     }
@@ -199,8 +197,7 @@ class Laravel
     public function setupPagination()
     {
         $paginationServiceProvider = new PaginationServiceProvider($this->app);
-        $paginationServiceProvider->register();
-        $paginationServiceProvider->boot();
+        $this->bootServiceProvider($paginationServiceProvider);
 
         return $this;
     }
@@ -225,6 +222,14 @@ class Laravel
 
             $databasePanel->logQuery($sql, $bindings, $time, $name, $pdo);
         });
+    }
+
+    protected function bootServiceProvider($serviceProvider)
+    {
+        $serviceProvider->register();
+        if (method_exists($serviceProvider, 'call') === true) {
+            $this->container->call([$serviceProvider, 'boot']);
+        }
     }
 
     /**
