@@ -2,18 +2,24 @@
 
 namespace Recca0120\LaravelBridge;
 
+use BadMethodCallException;
+use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Container\Container as LaravelContainer;
 use Illuminate\Database\DatabaseServiceProvider;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\PaginationServiceProvider;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Fluent;
 use Illuminate\View\ViewServiceProvider;
 use PDO;
 use Recca0120\LaravelTracy\Tracy;
 
+/**
+ * @mixin LaravelContainer
+ */
 class Laravel
 {
     /**
@@ -26,44 +32,14 @@ class Laravel
     ];
 
     /**
-     * $app.
-     *
      * @var App
      */
-    public $app;
-
-    /**
-     * $request.
-     *
-     * @var \Illuminate\Http\Request
-     */
-    public $request;
-
-    /**
-     * $dispatcher.
-     *
-     * @var \Illuminate\Events\Dispatcher
-     */
-    public $dispatcher;
-
-    /**
-     * $config.
-     *
-     * @var \Illuminate\Support\Fluent
-     */
-    public $config;
-
-    /**
-     * $files.
-     *
-     * @var \Illuminate\Filesystem\Filesystem;
-     */
-    public $files;
+    private $app;
 
     /**
      * $instance.
      *
-     * @var self
+     * @var static
      */
     public static $instance;
 
@@ -75,24 +51,31 @@ class Laravel
     public function __construct()
     {
         $this->app = new App();
-        $this->request = Request::capture();
-        $this->dispatcher = new Dispatcher();
-        $this->config = new Fluent();
-        $this->files = new Filesystem();
 
-        $this->app['request'] = $this->request;
-        $this->app['events'] = $this->dispatcher;
-        $this->app['config'] = $this->config;
-        $this->app['files'] = $this->files;
+        $this->app->singleton('request', function () {
+            return Request::capture();
+        });
+
+        $this->app->singleton('config', ConfigRepository::class);
+        $this->app->singleton('events', Dispatcher::class);
+        $this->app->singleton('files', Filesystem::class);
 
         Facade::setFacadeApplication($this->app);
 
         foreach ($this->aliases as $alias => $class) {
-            if (class_exists($alias) === true) {
-                continue;
+            if (!class_exists($alias)) {
+                class_alias($class, $alias);
             }
-            class_alias($class, $alias);
         }
+    }
+
+    public function __call($method, $arguments)
+    {
+        if (method_exists($this->app, $method)) {
+            return call_user_func_array([$this->app, $method], $arguments);
+        }
+
+        throw new BadMethodCallException("Undefined method '$method'");
     }
 
     /**
@@ -100,7 +83,7 @@ class Laravel
      *
      * @method getApp
      *
-     * @return \Illuminate\Container\Container
+     * @return LaravelContainer
      */
     public function getApp()
     {
@@ -112,11 +95,11 @@ class Laravel
      *
      * @method getRequest
      *
-     * @return \Illuminate\Http\Request
+     * @return Request
      */
     public function getRequest()
     {
-        return $this->request;
+        return $this->app->make('request');
     }
 
     /**
@@ -124,11 +107,11 @@ class Laravel
      *
      * @method getEvents
      *
-     * @return \Illuminate\Events\Dispatcher
+     * @return Dispatcher
      */
     public function getEvents()
     {
-        return $this->dispatcher;
+        return $this->app->make('dispatcher');
     }
 
     /**
@@ -136,11 +119,11 @@ class Laravel
      *
      * @method getConfig
      *
-     * @return \Illuminate\Support\Fluent
+     * @return ConfigRepository
      */
     public function getConfig()
     {
-        return $this->config;
+        return $this->app->make('config');
     }
 
     /**
@@ -158,19 +141,23 @@ class Laravel
      *
      * @method setupView
      *
-     * @param string $viewPath
+     * @param string|array $viewPath
      * @param string $compiledPath
      *
      * @return static
      */
     public function setupView($viewPath, $compiledPath)
     {
-        $this->config['view.paths'] = is_array($viewPath) ? $viewPath : [$viewPath];
-        $this->config['view.compiled'] = $compiledPath;
-        $viewServiceProvider = new ViewServiceProvider($this->app);
-        $this->bootServiceProvider($viewServiceProvider);
+        return $this->setupCallableProvider(function ($app) use ($viewPath, $compiledPath) {
+            $config = $this->getConfig();
 
-        return $this;
+            $config->set([
+                'view.paths' => is_array($viewPath) ? $viewPath : [$viewPath],
+                'view.compiled' => $compiledPath,
+            ]);
+
+            return new ViewServiceProvider($app);
+        });
     }
 
     /**
@@ -186,14 +173,17 @@ class Laravel
      */
     public function setupDatabase(array $connections, $default = 'default', $fetch = PDO::FETCH_CLASS)
     {
-        $this->config['database.fetch'] = PDO::FETCH_CLASS;
-        $this->config['database.default'] = $default;
-        $this->config['database.connections'] = $connections;
+        return $this->setupCallableProvider(function ($app) use ($connections, $default, $fetch) {
+            $config = $this->getConfig();
 
-        $databaseServiceProvider = new DatabaseServiceProvider($this->app);
-        $this->bootServiceProvider($databaseServiceProvider);
+            $config->set([
+                'database.connections' => $connections,
+                'database.default' => $default,
+                'database.fetch' => $fetch,
+            ]);
 
-        return $this;
+            return new DatabaseServiceProvider($app);
+        });
     }
 
     /**
@@ -205,10 +195,9 @@ class Laravel
      */
     public function setupPagination()
     {
-        $paginationServiceProvider = new PaginationServiceProvider($this->app);
-        $this->bootServiceProvider($paginationServiceProvider);
-
-        return $this;
+        return $this->setupCallableProvider(function ($app) {
+            return new PaginationServiceProvider($app);
+        });
     }
 
     /**
@@ -216,13 +205,14 @@ class Laravel
      *
      * @method setupTracy
      *
+     * @param array $config
      * @return static
      */
     public function setupTracy($config = [])
     {
         $tracy = Tracy::instance($config);
         $databasePanel = $tracy->getPanel('database');
-        $this->dispatcher->listen(QueryExecuted::class, function ($event) use ($databasePanel) {
+        $this->getEvents()->listen(QueryExecuted::class, function ($event) use ($databasePanel) {
             $sql = $event->sql;
             $bindings = $event->bindings;
             $time = $event->time;
@@ -231,6 +221,8 @@ class Laravel
 
             $databasePanel->logQuery($sql, $bindings, $time, $name, $pdo);
         });
+
+        return $this;
     }
 
     /**
@@ -239,7 +231,7 @@ class Laravel
      * @param callable $callable The callable can return the instance of ServiceProvider
      * @return static
      */
-    public function setupCustomProvider(callable $callable)
+    public function setupCallableProvider(callable $callable)
     {
         $this->bootServiceProvider($callable($this->app));
 
@@ -250,7 +242,7 @@ class Laravel
     {
         $serviceProvider->register();
         if (method_exists($serviceProvider, 'boot') === true) {
-            $this->app->call([$serviceProvider, 'boot']);
+            $this->call([$serviceProvider, 'boot']);
         }
     }
 
@@ -260,10 +252,23 @@ class Laravel
      * @method instance
      *
      * @return static
+     * @deprecated use createInstance()
      */
     public static function instance()
     {
-        if (is_null(static::$instance) === true) {
+        return static::createInstance();
+    }
+
+    /**
+     * create instance.
+     *
+     * @method instance
+     *
+     * @return static
+     */
+    public static function createInstance()
+    {
+        if (null === static::$instance) {
             static::$instance = new static();
         }
 

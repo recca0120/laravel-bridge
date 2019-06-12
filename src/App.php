@@ -2,11 +2,13 @@
 
 namespace Recca0120\LaravelBridge;
 
-use Illuminate\Container\Container;
+use Illuminate\Container\Container as LaravelContainer;
 
-class App extends Container
+class App extends LaravelContainer
 {
     /**
+     * For workaround
+     *
      * @return bool
      * @see https://github.com/laravel/framework/blob/5.8/src/Illuminate/Foundation/Application.php
      */
