@@ -8,8 +8,13 @@ php:
   - 5.6
   - 7.0
 
-install: travis_retry composer install --no-interaction --prefer-source
+install: travis_retry composer install --no-interaction --prefer-dist
 
 script:
   - php vendor/bin/phpcs
   - php vendor/bin/phpunit --verbose
+
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+    - vendor
