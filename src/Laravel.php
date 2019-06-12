@@ -2,17 +2,17 @@
 
 namespace Recca0120\LaravelBridge;
 
-use Illuminate\Database\DatabaseServiceProvider;
-use Illuminate\Events\Dispatcher;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Http\Request;
-use Illuminate\Pagination\PaginationServiceProvider;
-use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Fluent;
-use Illuminate\View\ViewServiceProvider;
 use PDO;
+use Illuminate\Http\Request;
+use Illuminate\Support\Fluent;
+use Illuminate\Events\Dispatcher;
 use Recca0120\LaravelTracy\Tracy;
+use Illuminate\Support\Facades\View;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Facade;
+use Illuminate\View\ViewServiceProvider;
+use Illuminate\Database\DatabaseServiceProvider;
+use Illuminate\Pagination\PaginationServiceProvider;
 
 class Laravel
 {
@@ -234,7 +234,7 @@ class Laravel
     }
 
     /**
-     * setup user define provider
+     * setup user define provider.
      *
      * @param callable $callable The callable can return the instance of ServiceProvider
      * @return static

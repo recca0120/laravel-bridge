@@ -13,7 +13,7 @@ class App extends Container
     public function runningInConsole()
     {
         if (isset($this['runningInConsole'])) {
-            return (bool)$this['runningInConsole'];
+            return (bool) $this['runningInConsole'];
         }
 
         if (isset($_ENV['APP_RUNNING_IN_CONSOLE'])) {

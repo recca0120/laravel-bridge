@@ -2,10 +2,10 @@
 
 namespace Tests;
 
-use Illuminate\View\ViewServiceProvider;
 use Mockery as m;
 use PHPUnit_Framework_TestCase;
 use Recca0120\LaravelBridge\Laravel;
+use Illuminate\View\ViewServiceProvider;
 
 class LaravelTest extends PHPUnit_Framework_TestCase
 {
