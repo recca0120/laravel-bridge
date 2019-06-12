@@ -1,7 +1,6 @@
 * text=auto
 
-/screenshots export-ignore
-/build export-ignore
+# Exclude unused files
 /tests export-ignore
 .editorconfig export-ignore
 .gitattributes export-ignore
@@ -9,5 +8,8 @@
 .nitpick.json export-ignore
 .php_cs export-ignore
 .travis.yml export-ignore
-phpunit.php export-ignore
+gulpfile.js export-ignore
+package.json export-ignore
+phpcs.xml export-ignore
 phpunit.xml export-ignore
+ruleset.xml export-ignore
