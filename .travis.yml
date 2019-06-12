@@ -11,6 +11,11 @@ php:
   - 7.2
   - 7.3
 
+branches:
+  only:
+    - master
+    - /^v\d+\.\d+\.\d+$/
+
 install:
   - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --no-interaction
 
