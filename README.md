@@ -23,6 +23,8 @@ Now, run a composer update on the command line from the root of your project:
 composer update
 ```
 
+> **NOTICE**: NOT support Laravel 5.4.*
+
 ## How to use
 
 setup

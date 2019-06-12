@@ -17,6 +17,13 @@ class LaravelTest extends PHPUnit_Framework_TestCase
             ->setupView(__DIR__, __DIR__);
     }
 
+    public function test_setup_pagination()
+    {
+        Laravel::instance()
+            ->setupRunningInConsole(false)
+            ->setupPagination();
+    }
+
     public function test_setup_custom_provider()
     {
         Laravel::instance()
