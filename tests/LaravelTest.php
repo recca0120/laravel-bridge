@@ -1,7 +1,10 @@
 <?php
 
+namespace Tests;
+
 use Illuminate\View\ViewServiceProvider;
 use Mockery as m;
+use PHPUnit_Framework_TestCase;
 use Recca0120\LaravelBridge\Laravel;
 
 class LaravelTest extends PHPUnit_Framework_TestCase
@@ -11,20 +14,20 @@ class LaravelTest extends PHPUnit_Framework_TestCase
         m::close();
     }
 
-    public function test_instance()
+    public function testInstance()
     {
         Laravel::instance()
             ->setupView(__DIR__, __DIR__);
     }
 
-    public function test_setup_pagination()
+    public function testSetupPagination()
     {
         Laravel::instance()
             ->setupRunningInConsole(false)
             ->setupPagination();
     }
 
-    public function test_setup_custom_provider()
+    public function testSetupCustomProvider()
     {
         Laravel::instance()
             ->setupCustomProvider(function ($app) {
