@@ -227,8 +227,8 @@ class Laravel
     protected function bootServiceProvider($serviceProvider)
     {
         $serviceProvider->register();
-        if (method_exists($serviceProvider, 'call') === true) {
-            $this->container->call([$serviceProvider, 'boot']);
+        if (method_exists($serviceProvider, 'boot') === true) {
+            $this->app->call([$serviceProvider, 'boot']);
         }
     }
 
