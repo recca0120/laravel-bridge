@@ -1,5 +1,7 @@
 # Laravel Bridge
 
+[![Build Status](https://travis-ci.org/recca0120/laravel-bridge.svg?branch=master)](https://travis-ci.org/recca0120/laravel-bridge)
+[![Coverage Status](https://coveralls.io/repos/github/recca0120/laravel-bridge/badge.svg?branch=master)](https://coveralls.io/github/recca0120/laravel-bridge)
 [![Latest Stable Version](https://poser.pugx.org/recca0120/laravel-bridge/v/stable)](https://packagist.org/packages/recca0120/laravel-bridge)
 [![Total Downloads](https://poser.pugx.org/recca0120/laravel-bridge/downloads)](https://packagist.org/packages/recca0120/laravel-bridge)
 [![Latest Unstable Version](https://poser.pugx.org/recca0120/laravel-bridge/v/unstable)](https://packagist.org/packages/recca0120/laravel-bridge)
