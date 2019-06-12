@@ -224,6 +224,19 @@ class Laravel
         });
     }
 
+    /**
+     * setup user define provider
+     *
+     * @param callable $callable The callable can return the instance of ServiceProvider
+     * @return static
+     */
+    public function setupCustomProvider(callable $callable)
+    {
+        $this->bootServiceProvider($callable($this->app));
+
+        return $this;
+    }
+
     protected function bootServiceProvider($serviceProvider)
     {
         $serviceProvider->register();
