@@ -4,10 +4,10 @@ namespace Tests;
 
 use Illuminate\View\ViewServiceProvider;
 use Mockery as m;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Recca0120\LaravelBridge\Laravel;
 
-class LaravelTest extends PHPUnit_Framework_TestCase
+class LaravelTest extends TestCase
 {
     public function tearDown()
     {
