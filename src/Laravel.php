@@ -2,7 +2,6 @@
 
 namespace Recca0120\LaravelBridge;
 
-use Illuminate\Container\Container;
 use Illuminate\Database\DatabaseServiceProvider;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
@@ -29,7 +28,7 @@ class Laravel
     /**
      * $app.
      *
-     * @var \Illuminate\Container\Container
+     * @var App
      */
     public $app;
 
@@ -75,7 +74,7 @@ class Laravel
      */
     public function __construct()
     {
-        $this->app = new Container();
+        $this->app = new App();
         $this->request = Request::capture();
         $this->dispatcher = new Dispatcher();
         $this->config = new Fluent();
@@ -145,6 +144,16 @@ class Laravel
     }
 
     /**
+     * @param bool $is
+     */
+    public function setupRunningInConsole($is = true)
+    {
+        $this->app['runningInConsole'] = $is;
+
+        return $this;
+    }
+
+    /**
      * setupView.
      *
      * @method setupView
@@ -169,9 +178,9 @@ class Laravel
      *
      * @method setupDatabase
      *
-     * @param array  $connections
+     * @param array $connections
      * @param string $default
-     * @param int    $fetch
+     * @param int $fetch
      *
      * @return static
      */
