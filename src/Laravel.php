@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\PaginationServiceProvider;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Translation\TranslationServiceProvider;
 use Illuminate\View\ViewServiceProvider;
 use PDO;
 use Recca0120\LaravelTracy\Tracy;
@@ -226,6 +228,30 @@ class Laravel
     }
 
     /**
+     * @param string $langPath
+     * @return static
+     */
+    public function setupTranslator($langPath)
+    {
+        return $this->setupCallableProvider(function () use ($langPath) {
+            $this->app->instance('path.lang', $langPath);
+
+            return new TranslationServiceProvider($this->app);
+        });
+    }
+
+    /**
+     * @param string $locale
+     * @return static
+     */
+    public function setupLocale($locale)
+    {
+        $this->app['config']['app.locale'] = $locale;
+
+        return $this;
+    }
+
+    /**
      * setup user define provider
      *
      * @param callable $callable The callable can return the instance of ServiceProvider
@@ -238,7 +264,7 @@ class Laravel
         return $this;
     }
 
-    protected function bootServiceProvider($serviceProvider)
+    protected function bootServiceProvider(ServiceProvider $serviceProvider)
     {
         $serviceProvider->register();
         if (method_exists($serviceProvider, 'boot') === true) {
