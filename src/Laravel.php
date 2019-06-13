@@ -3,6 +3,7 @@
 namespace Recca0120\LaravelBridge;
 
 use BadMethodCallException;
+use Exception;
 use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Container\Container as LaravelContainer;
 use Illuminate\Database\DatabaseServiceProvider;
@@ -17,13 +18,22 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Translation\TranslationServiceProvider;
 use Illuminate\View\ViewServiceProvider;
 use PDO;
+use Psr\Container\ContainerInterface;
+use Recca0120\LaravelBridge\Exceptions\EntryNotFoundException;
 use Recca0120\LaravelTracy\Tracy;
 
 /**
  * @mixin LaravelContainer
  */
-class Laravel
+class Laravel implements ContainerInterface
 {
+    /**
+     * $instance.
+     *
+     * @var static
+     */
+    public static $instance;
+
     /**
      * $aliases.
      *
@@ -39,11 +49,9 @@ class Laravel
     private $app;
 
     /**
-     * $instance.
-     *
-     * @var static
+     * @var bool
      */
-    public static $instance;
+    private $bootstrapped = false;
 
     /**
      * __construct.
@@ -53,12 +61,29 @@ class Laravel
     public function __construct()
     {
         $this->app = new App();
+    }
+
+    public function __call($method, $arguments)
+    {
+        if (method_exists($this->app, $method)) {
+            return call_user_func_array([$this->app, $method], $arguments);
+        }
+
+        throw new BadMethodCallException("Undefined method '$method'");
+    }
+
+    /**
+     * @return static
+     */
+    public function bootstrap()
+    {
+        $this->bootstrapped = true;
+        $this->app->instance('config', new ConfigRepository());
 
         $this->app->singleton('request', function () {
             return Request::capture();
         });
 
-        $this->app->singleton('config', ConfigRepository::class);
         $this->app->singleton('events', Dispatcher::class);
         $this->app->singleton('files', Filesystem::class);
 
@@ -69,15 +94,40 @@ class Laravel
                 class_alias($class, $alias);
             }
         }
+
+        return $this;
     }
 
-    public function __call($method, $arguments)
+    /**
+     * @return bool
+     */
+    public function isBootstrapped()
     {
-        if (method_exists($this->app, $method)) {
-            return call_user_func_array([$this->app, $method], $arguments);
-        }
+        return $this->bootstrapped;
+    }
 
-        throw new BadMethodCallException("Undefined method '$method'");
+    /**
+     * {@inheritDoc}
+     */
+    public function has($id)
+    {
+        return $this->app->bound($id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function get($id)
+    {
+        try {
+            return $this->app->make($id);
+        } catch (Exception $e) {
+            if ($this->has($id)) {
+                throw $e;
+            }
+
+            throw new EntryNotFoundException;
+        }
     }
 
     /**
@@ -130,6 +180,7 @@ class Laravel
 
     /**
      * @param bool $is
+     * @return static
      */
     public function setupRunningInConsole($is = true)
     {
@@ -268,7 +319,7 @@ class Laravel
     {
         $serviceProvider->register();
         if (method_exists($serviceProvider, 'boot') === true) {
-            $this->call([$serviceProvider, 'boot']);
+            $this->app->call([$serviceProvider, 'boot']);
         }
     }
 
@@ -278,7 +329,7 @@ class Laravel
      * @method instance
      *
      * @return static
-     * @deprecated use createInstance()
+     * @deprecated use getInstance()
      */
     public static function instance()
     {
@@ -298,6 +349,21 @@ class Laravel
             static::$instance = new static();
         }
 
+        if (!static::$instance->isBootstrapped()) {
+            static::$instance->bootstrap();
+        }
+
         return static::$instance;
+    }
+
+    /**
+     * Flash instance
+     */
+    public static function flashInstance()
+    {
+        $instance = static::createInstance();
+
+        $instance->flush();
+        $instance->bootstrapped = false;
     }
 }
