@@ -13,9 +13,9 @@ if (! function_exists('app')) {
     function app($abstract = null, array $parameters = [])
     {
         if (null === $abstract) {
-            return Laravel::createInstance();
+            return Laravel::getInstance();
         }
 
-        return Laravel::createInstance()->make($abstract, $parameters);
+        return Laravel::getInstance()->make($abstract, $parameters);
     }
 }

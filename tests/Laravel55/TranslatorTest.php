@@ -10,7 +10,7 @@ class TranslatorTest extends TestCase
 {
     public function testLangDirective()
     {
-        Laravel::createInstance()
+        Laravel::getInstance()
             ->setupLocale('en')
             ->setupTranslator($this->resourcePath('lang'))
             ->setupView($this->resourcePath('views'), $this->storagePath('framework/views'));
