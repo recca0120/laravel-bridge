@@ -12,7 +12,7 @@ class LaravelTest extends TestCase
 {
     public function testGetInstanceInContainer()
     {
-        $instance = Laravel::createInstance();
+        $instance = Laravel::getInstance();
 
         $this->assertInstanceOf(Collection::class, $instance->get(Collection::class));
     }
@@ -22,14 +22,14 @@ class LaravelTest extends TestCase
      */
     public function testShouldThrowExceptionWhenGetNotExistClass()
     {
-        $instance = Laravel::createInstance();
+        $instance = Laravel::getInstance();
 
         $instance->get('whatever');
     }
 
     public function testCheckInstanceInContainer()
     {
-        $instance = Laravel::createInstance()
+        $instance = Laravel::getInstance()
             ->setupView(__DIR__, __DIR__);
 
         $this->assertTrue($instance->has('view'));
@@ -38,7 +38,7 @@ class LaravelTest extends TestCase
 
     public function testInstance()
     {
-        $actual = Laravel::createInstance()
+        $actual = Laravel::getInstance()
             ->setupView(__DIR__, __DIR__);
 
         $this->assertInstanceOf(ViewFactory::class, $actual->make('view'));
@@ -46,7 +46,7 @@ class LaravelTest extends TestCase
 
     public function testSetupPagination()
     {
-        $actual = Laravel::createInstance()
+        $actual = Laravel::getInstance()
             ->setupRunningInConsole(false)
             ->setupView(__DIR__, __DIR__)
             ->setupPagination();
@@ -56,7 +56,7 @@ class LaravelTest extends TestCase
 
     public function testSetupCallableProvider()
     {
-        $actual = Laravel::createInstance()
+        $actual = Laravel::getInstance()
             ->setupCallableProvider(function ($app) {
                 $app['config']['view.paths'] = [__DIR__];
                 $app['config']['view.compiled'] = __DIR__;
