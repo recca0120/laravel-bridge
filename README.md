@@ -19,6 +19,9 @@ Add Presenter to your composer.json file:
     "recca0120/laravel-bridge": "^1.0.0"
 }
 ```
+
+> Require `illuminate/translation` when using Pagination. 
+
 Now, run a composer update on the command line from the root of your project:
 
 ```
