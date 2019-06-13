@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Illuminate\View\Factory as ViewFactory;
 use Illuminate\View\ViewServiceProvider;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
@@ -16,25 +17,31 @@ class LaravelTest extends TestCase
 
     public function testInstance()
     {
-        Laravel::instance()
+        $actual = Laravel::createInstance()
             ->setupView(__DIR__, __DIR__);
+
+        $this->assertInstanceOf(ViewFactory::class, $actual->make('view'));
     }
 
     public function testSetupPagination()
     {
-        Laravel::instance()
+        $actual = Laravel::createInstance()
             ->setupRunningInConsole(false)
             ->setupPagination();
+
+        $this->assertInstanceOf(ViewFactory::class, $actual->make('view'));
     }
 
-    public function testSetupCustomProvider()
+    public function testSetupCallableProvider()
     {
-        Laravel::instance()
-            ->setupCustomProvider(function ($app) {
+        $actual = Laravel::createInstance()
+            ->setupCallableProvider(function ($app) {
                 $app['config']['view.paths'] = [__DIR__];
                 $app['config']['view.compiled'] = __DIR__;
 
                 return new ViewServiceProvider($app);
             });
+
+        $this->assertInstanceOf(ViewFactory::class, $actual->make('view'));
     }
 }
