@@ -111,7 +111,7 @@ class Laravel
      */
     public function getEvents()
     {
-        return $this->app->make('dispatcher');
+        return $this->app->make('events');
     }
 
     /**
