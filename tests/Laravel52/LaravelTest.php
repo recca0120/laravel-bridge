@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests;
+namespace Tests\Laravel52;
 
 use Illuminate\View\Factory as ViewFactory;
 use Illuminate\View\ViewServiceProvider;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 use Recca0120\LaravelBridge\Laravel;
+use Tests\TestCase;
 
 class LaravelTest extends TestCase
 {

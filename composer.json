@@ -21,10 +21,12 @@
         "recca0120/laravel-tracy": "^1.5"
     },
     "require-dev": {
+        "illuminate/translation": "^5.2",
         "mockery/mockery": "~0.9.2",
         "nesbot/carbon": "~1.20",
         "php-coveralls/php-coveralls": "^2.1",
         "phpunit/phpunit": "^4 | ^5 | ^6",
+        "psy/psysh": "^0.9.9",
         "squizlabs/php_codesniffer": "^3.4"
     },
     "conflict": {
@@ -32,8 +34,16 @@
         "illuminate/pagination": "5.3.* | 5.4.*"
     },
     "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
         "psr-4": {
-            "Recca0120\\LaravelBridge\\": "src/"
+            "Recca0120\\LaravelBridge\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests"
         }
     },
     "config": {
