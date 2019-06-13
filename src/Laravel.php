@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Fluent;
 use Psr\Container\ContainerInterface;
-use Recca0120\LaravelBridge\Exceptions\EntryNotFoundException;
 use Recca0120\LaravelBridge\Concerns\SetupLaravel;
 use Recca0120\LaravelBridge\Concerns\SetupTracy;
+use Recca0120\LaravelBridge\Exceptions\EntryNotFoundException;
 
 /**
  * @mixin LaravelContainer
@@ -76,6 +76,8 @@ class Laravel implements ContainerInterface
         $this->app->singleton('files', Filesystem::class);
 
         Facade::setFacadeApplication($this->app);
+
+        $this->setupLaravelProviders();
 
         foreach ($this->aliases as $alias => $class) {
             if (!class_exists($alias)) {

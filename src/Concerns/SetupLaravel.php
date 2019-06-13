@@ -11,6 +11,41 @@ use PDO;
 trait SetupLaravel
 {
     /**
+     * Setup all LaravelProvider
+     */
+    public function setupLaravelProviders()
+    {
+        collect([
+            'Illuminate\Auth\AuthServiceProvider',
+            'Illuminate\Broadcasting\BroadcastServiceProvider',
+            'Illuminate\Bus\BusServiceProvider',
+            'Illuminate\Cache\CacheServiceProvider',
+            'Illuminate\Foundation\Providers\ConsoleSupportServiceProvider',
+            'Illuminate\Cookie\CookieServiceProvider',
+            'Illuminate\Database\DatabaseServiceProvider',
+            'Illuminate\Encryption\EncryptionServiceProvider',
+            'Illuminate\Filesystem\FilesystemServiceProvider',
+            'Illuminate\Foundation\Providers\FoundationServiceProvider',
+            'Illuminate\Hashing\HashServiceProvider',
+            'Illuminate\Mail\MailServiceProvider',
+            'Illuminate\Notifications\NotificationServiceProvider',
+            'Illuminate\Pagination\PaginationServiceProvider',
+            'Illuminate\Pipeline\PipelineServiceProvider',
+            'Illuminate\Queue\QueueServiceProvider',
+            'Illuminate\Redis\RedisServiceProvider',
+            'Illuminate\Auth\Passwords\PasswordResetServiceProvider',
+            'Illuminate\Session\SessionServiceProvider',
+            'Illuminate\Translation\TranslationServiceProvider',
+            'Illuminate\Validation\ValidationServiceProvider',
+            'Illuminate\View\ViewServiceProvider',
+        ])->filter(function ($provider) {
+            return class_exists($provider);
+        })->each(function ($provider) {
+            $this->app->register($provider);
+        });
+    }
+
+    /**
      * setup user define provider
      *
      * @param callable $callable The callable can return the instance of ServiceProvider
@@ -38,13 +73,11 @@ trait SetupLaravel
      */
     public function setupDatabase(array $connections, $default = 'default', $fetch = PDO::FETCH_CLASS)
     {
-        return $this->setupCallableProvider(function ($app) use ($connections, $default, $fetch) {
-            $app['config']['database.connections'] = $connections;
-            $app['config']['database.default'] = $default;
-            $app['config']['database.fetch'] = $fetch;
+        $this->app['config']['database.connections'] = $connections;
+        $this->app['config']['database.default'] = $default;
+        $this->app['config']['database.fetch'] = $fetch;
 
-            return new DatabaseServiceProvider($app);
-        });
+        return $this->bootProvider(DatabaseServiceProvider::class);
     }
 
     /**
@@ -64,9 +97,7 @@ trait SetupLaravel
      */
     public function setupPagination()
     {
-        return $this->setupCallableProvider(function ($app) {
-            return new PaginationServiceProvider($app);
-        });
+        return $this->bootProvider(PaginationServiceProvider::class);
     }
 
     /**
@@ -76,11 +107,9 @@ trait SetupLaravel
      */
     public function setupTranslator($langPath)
     {
-        return $this->setupCallableProvider(function ($app) use ($langPath) {
-            $app->instance('path.lang', $langPath);
+        $this->app->instance('path.lang', $langPath);
 
-            return new TranslationServiceProvider($app);
-        });
+        return $this->bootProvider(TranslationServiceProvider::class);
     }
 
     /**
@@ -91,11 +120,24 @@ trait SetupLaravel
      */
     public function setupView($viewPath, $compiledPath)
     {
-        return $this->setupCallableProvider(function ($app) use ($viewPath, $compiledPath) {
-            $app['config']['view.paths'] = is_array($viewPath) ? $viewPath : [$viewPath];
-            $app['config']['view.compiled'] = $compiledPath;
+        $this->app['config']['view.paths'] = is_array($viewPath) ? $viewPath : [$viewPath];
+        $this->app['config']['view.compiled'] = $compiledPath;
 
-            return new ViewServiceProvider($app);
-        });
+        return $this->bootProvider(ViewServiceProvider::class);
+    }
+
+    /**
+     * @param string|mixed $provider
+     * @return static
+     */
+    public function bootProvider($provider)
+    {
+        $provider = $this->app->getProvider($provider);
+
+        if (method_exists($provider, 'boot')) {
+            $this->app->call([$provider, 'boot']);
+        }
+
+        return $this;
     }
 }
