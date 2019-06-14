@@ -97,6 +97,11 @@ trait SetupLaravel
      */
     public function setupPagination()
     {
+        if (! isset($this->app['path.lang'])) {
+            // default pagination view without translation
+            $this->app['view']->addNamespace('pagination', __DIR__.'/../../resources/views/pagination/');
+        }
+
         return $this->bootProvider(PaginationServiceProvider::class);
     }
 
