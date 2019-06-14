@@ -120,7 +120,7 @@ class Laravel implements ContainerInterface
                 throw $e;
             }
 
-            throw new EntryNotFoundException;
+            throw new EntryNotFoundException("Entry '$id' is not found");
         }
     }
 
