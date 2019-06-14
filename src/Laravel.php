@@ -65,6 +65,10 @@ class Laravel implements ContainerInterface
      */
     public function bootstrap()
     {
+        if ($this->bootstrapped) {
+            return $this;
+        }
+
         $this->bootstrapped = true;
 
         $this->app->singleton('request', function () {
