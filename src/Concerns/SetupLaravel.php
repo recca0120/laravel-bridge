@@ -2,16 +2,16 @@
 
 namespace Recca0120\LaravelBridge\Concerns;
 
+use PDO;
+use Illuminate\View\ViewServiceProvider;
 use Illuminate\Database\DatabaseServiceProvider;
 use Illuminate\Pagination\PaginationServiceProvider;
 use Illuminate\Translation\TranslationServiceProvider;
-use Illuminate\View\ViewServiceProvider;
-use PDO;
 
 trait SetupLaravel
 {
     /**
-     * Setup all LaravelProvider
+     * Setup all LaravelProvider.
      */
     public function setupLaravelProviders()
     {
@@ -46,7 +46,7 @@ trait SetupLaravel
     }
 
     /**
-     * setup user define provider
+     * setup user define provider.
      *
      * @param callable $callable The callable can return the instance of ServiceProvider
      *
@@ -97,6 +97,11 @@ trait SetupLaravel
      */
     public function setupPagination()
     {
+        if (! isset($this->app['path.lang'])) {
+            // default pagination view without translation
+            $this->app['view']->addNamespace('pagination', __DIR__.'/../../resources/views/pagination/');
+        }
+
         return $this->bootProvider(PaginationServiceProvider::class);
     }
 
