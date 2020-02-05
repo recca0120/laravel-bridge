@@ -1,13 +1,15 @@
-# Laravel Bridge
+<p align="center"><img src="docs/logo.svg"></p>
 
-[![Build Status](https://travis-ci.org/recca0120/laravel-bridge.svg?branch=master)](https://travis-ci.org/recca0120/laravel-bridge)
-[![Coverage Status](https://coveralls.io/repos/github/recca0120/laravel-bridge/badge.svg?branch=master)](https://coveralls.io/github/recca0120/laravel-bridge)
-[![Latest Stable Version](https://poser.pugx.org/recca0120/laravel-bridge/v/stable)](https://packagist.org/packages/recca0120/laravel-bridge)
-[![Total Downloads](https://poser.pugx.org/recca0120/laravel-bridge/downloads)](https://packagist.org/packages/recca0120/laravel-bridge)
-[![Latest Unstable Version](https://poser.pugx.org/recca0120/laravel-bridge/v/unstable)](https://packagist.org/packages/recca0120/laravel-bridge)
-[![License](https://poser.pugx.org/recca0120/laravel-bridge/license)](https://packagist.org/packages/recca0120/laravel-bridge)
-[![Monthly Downloads](https://poser.pugx.org/recca0120/laravel-bridge/d/monthly)](https://packagist.org/packages/recca0120/laravel-bridge)
-[![Daily Downloads](https://poser.pugx.org/recca0120/laravel-bridge/d/daily)](https://packagist.org/packages/recca0120/laravel-bridge)
+<p align="center">
+<a href="https://travis-ci.org/recca0120/laravel-bridge"><img src="https://travis-ci.org/recca0120/laravel-bridge.svg?branch=master" alt="Build Status"></a>
+<a href="https://coveralls.io/github/recca0120/laravel-bridge"><img src="https://coveralls.io/repos/github/recca0120/laravel-bridge/badge.svg?branch=master" alt="Coverage Status"></a>
+<a href="https://packagist.org/packages/recca0120/laravel-bridge"><img src="https://poser.pugx.org/recca0120/laravel-bridge/v/stable" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/recca0120/laravel-bridge"><img src="https://poser.pugx.org/recca0120/laravel-bridge/downloads" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/recca0120/laravel-bridge"><img src="https://poser.pugx.org/recca0120/laravel-bridge/v/unstable" alt="Latest Unstable Version"></a>
+<a href="https://packagist.org/packages/recca0120/laravel-bridge"><img src="https://poser.pugx.org/recca0120/laravel-bridge/license" alt="License"></a>
+<a href="https://packagist.org/packages/recca0120/laravel-bridge"><img src="https://poser.pugx.org/recca0120/laravel-bridge/d/monthly" alt="Monthly Downloads"></a>
+<a href="https://packagist.org/packages/recca0120/laravel-bridge"><img src="https://poser.pugx.org/recca0120/laravel-bridge/d/daily" alt="Daily Downloads"></a>
+</p>
 
 
 ## Installation
@@ -20,7 +22,7 @@ Add Presenter to your composer.json file:
 }
 ```
 
-> Require `illuminate/translation` when using Pagination. 
+> Require `illuminate/translation` when using Pagination.
 
 Now, run a composer update on the command line from the root of your project:
 
